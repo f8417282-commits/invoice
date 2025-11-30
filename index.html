@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MS Enterprise Invoice Generator</title>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&amp;display=swap" rel="stylesheet" />
+
+<style>
+  * {
+    box-sizing: border-box;
+  }
+  
+  body {
+    background:#0f1114;
+    font-family:'Montserrat', sans-serif;
+    color:#e6e6e6;
+    margin:0;
+    padding:20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+  
+  .invoice-container {
+    width: 210mm; /* A4 width */
+    min-height: 297mm; /* A4 height */
+    margin: 0 auto;
+    position: relative;
+  }
+  
+  .invoice {
+    width: 100%;
+    height: 100%;
+    background: #15181d;
+    padding: 20mm; /* A4 standard padding */
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,194,255,.3);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .bg-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('https://i.postimg.cc/MZD7zH7Q/An-A4-sized-backgrou.png') no-repeat center center;
+    background-size: cover;
+    z-index: 1;
+    opacity: 0.4; /* Adjust background image opacity */
+  }
+  
+  .invoice-content {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15mm;
+    flex-wrap: wrap;
+    border-bottom: 1px solid rgba(42, 47, 55, 0.7);
+    padding-bottom: 5mm;
+  }
+  
+  .logo-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .logo {
+    width: 25mm;
+    height: 25mm;
+    border-radius: 8px;
+    object-fit: contain;
+    background: transparent;
+    padding: 0;
+  }
+  
+  .company-info {
+    text-align: left;
+  }
+  
+  .company-info h1 {
+    color:#fff;
+    margin:0;
+    font-size: 28px;
+    text-shadow: 0 0 5px rgba(0,0,0,0.7);
+  }
+  
+  .company-info h2 {
+    color:#b7c0ce;
+    margin:0;
+    font-size:14px;
+    font-weight: 600;
+    text-shadow: 0 0 5px rgba(0,0,0,0.7);
+  }
+  
+  .invoice-header {
+    text-align: right;
+    padding: 10px 0;
+  }
+  
+  .invoice-header h1 {
+    color: #00c2ff;
+    margin: 0;
+    font-size: 32px;
+    font-weight: 700;
+    text-shadow: 0 0 10px rgba(0,194,255,.5);
+  }
+  
+  .row {
+    display:flex;
+    justify-content:space-between;
+    margin-bottom: 5mm;
+  }
+  
+  .col {
+    width:48%;
+  }
+  
+  .input-group {
+    margin-bottom: 10px;
+  }
+  
+  .input-label {
+    display: block;
+    color: #b7c0ce;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  input, textarea {
+    width:100%;
+    padding:8px;
+    margin:0;
+    background:rgba(12, 15, 19, 0.8);
+    border:1px solid #2a2f37;
+    color:#fff;
+    border-radius:6px;
+    transition: all 0.3s;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+  }
+  
+  /* Fix for input text visibility */
+  input::placeholder, textarea::placeholder {
+    color: #6b7280;
+    opacity: 0.7;
+  }
+  
+  input:not(:placeholder-shown), textarea:not(:placeholder-shown) {
+    background: rgba(12, 15, 19, 0.9);
+    border-color: #00c2ff;
+  }
+  
+  input:focus, textarea:focus {
+    outline: none;
+    border-color: #00c2ff;
+    box-shadow: 0 0 5px rgba(0,194,255,.5);
+    background: rgba(12, 15, 19, 0.95);
+  }
+  
+  /* Ensure text remains visible in inputs */
+  input, textarea {
+    color: #ffffff !important;
+  }
+  
+  table {
+    width:100%;
+    border-collapse:collapse;
+    margin: 5mm 0;
+  }
+  
+  th, td {
+    border:1px solid #2a2f37;
+    padding:8px;
+    text-align:left;
+  }
+  
+  th {
+    background:rgba(12, 15, 19, 0.8);
+    color: #00c2ff;
+  }
+  
+  .table-input-label {
+    display: none; /* Hide labels in table for cleaner look */
+  }
+  
+  .summary {
+    margin-top: 5mm;
+  }
+  
+  .summary input {
+    width:150px;
+  }
+  
+  .tax-percentage-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .tax-percentage-input {
+    width: 60px !important;
+    text-align: center;
+  }
+  
+  .actions {
+    margin-top: 10mm;
+    text-align:center;
+  }
+  
+  button {
+    padding:10px 15px;
+    margin-right:10px;
+    background:#1c6ed6;
+    color:#fff;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+    transition:background 0.3s;
+    font-weight: 600;
+  }
+  
+  button:hover {
+    background:#0d5bb9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  }
+  
+  .add-row {
+    margin:10px 0;
+    text-align:center;
+  }
+  
+  .summary-row {
+    display:flex;
+    justify-content:space-between;
+    margin:5px 0;
+    align-items: center;
+  }
+  
+  .summary-label {
+    width:150px;
+    display:inline-block;
+    font-weight: 600;
+  }
+  
+  .total-row {
+    border-top: 2px solid #2a2f37;
+    padding-top: 10px;
+    margin-top: 10px;
+  }
+  
+  .total-row input {
+    background: rgba(12, 15, 19, 0.9);
+    border: 2px solid #00c2ff;
+    font-weight: 700;
+    font-size: 16px;
+  }
+  
+  footer {
+    text-align:center;
+    margin-top: 10mm;
+    padding-top: 15px;
+    border-top: 1px solid rgba(42, 47, 55, 0.7);
+  }
+  
+  footer p {
+    margin: 5px 0;
+    text-shadow: 0 0 5px rgba(0,0,0,0.7);
+  }
+  
+  h3 {
+    color: #b7c0ce;
+    text-shadow: 0 0 5px rgba(0,0,0,0.7);
+    margin-bottom: 10px;
+  }
+  
+  #loadingMessage {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    z-index: 1000;
+    text-align: center;
+  }
+  
+  /* Print Styles */
+  @media print {
+    body {
+      background:#fff;
+      color:#000;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .invoice-container {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      box-shadow: none;
+    }
+    
+    .invoice {
+      box-shadow: none;
+      padding: 15mm;
+      border-radius: 0;
+    }
+    
+    .actions, .add-row {
+      display: none !important;
+    }
+    
+    /* Ensure background and logo print */
+    .bg-image {
+      opacity: 0.3;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    
+    .logo {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    
+    /* Ensure input text is visible in print */
+    input, textarea {
+      background: transparent !important;
+      border: 1px solid #000 !important;
+      color: #000 !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    
+    .input-label {
+      color: #000 !important;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .invoice-container {
+      width: 100%;
+      min-height: auto;
+    }
+    
+    .header-container {
+      flex-direction: column;
+      text-align: center;
+    }
+    
+    .logo-container {
+      justify-content: center;
+      margin-bottom: 15px;
+    }
+    
+    .invoice-header {
+      text-align: center;
+    }
+    
+    .row {
+      flex-direction: column;
+    }
+    
+    .col {
+      width: 100%;
+      margin-bottom: 15px;
+    }
+    
+    .tax-percentage-container {
+      justify-content: space-between;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div id="loadingMessage">
+  <p>Generating PDF, please wait...</p>
+</div>
+
+<div class="invoice-container">
+  <div class="invoice">
+    <div class="bg-image"></div>
+    <div class="invoice-content">
+      <div class="header-container">
+        <div class="logo-container">
+          <img src="https://i.postimg.cc/PrDdmpS8/A-stylized-blue-logo.png" alt="MS Enterprise Logo" class="logo" id="companyLogo">
+          <div class="company-info">
+            <h1>MS Enterprise</h1>
+            <h2>INDUSTRIAL EQUIPMENT TRADING</h2>
+          </div>
+        </div>
+        <div class="invoice-header">
+          <h1>INVOICE</h1>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <h3>BILL TO:</h3>
+          <div class="input-group">
+            <label class="input-label" for="clientName">Client Name</label>
+            <input type="text" id="clientName" placeholder="Enter client name">
+          </div>
+          <div class="input-group">
+            <label class="input-label" for="clientAddress">Client Address</label>
+            <textarea id="clientAddress" placeholder="Enter complete address" rows="3"></textarea>
+          </div>
+        </div>
+        <div class="col">
+          <h3>INVOICE DETAILS:</h3>
+          <div class="input-group">
+            <label class="input-label" for="invoiceNo">Invoice Number</label>
+            <input type="text" id="invoiceNo" placeholder="e.g., INV-001">
+          </div>
+          <div class="input-group">
+            <label class="input-label" for="invoiceDate">Invoice Date</label>
+            <input type="date" id="invoiceDate">
+          </div>
+          <div class="input-group">
+            <label class="input-label" for="poNo">Purchase Order No.</label>
+            <input type="text" id="poNo" placeholder="e.g., PO-123">
+          </div>
+          <div class="input-group">
+            <label class="input-label" for="terms">Payment Terms</label>
+            <input type="text" id="terms" placeholder="e.g., Net 30">
+          </div>
+        </div>
+      </div>
+
+      <table id="itemsTable">
+        <thead>
+          <tr>
+            <th width="15%">QTY</th>
+            <th width="45%">DESCRIPTION</th>
+            <th width="20%">UNIT PRICE</th>
+            <th width="20%">AMOUNT</th>
+          </tr>
+        </thead>
+        <tbody id="itemsBody">
+          <tr>
+            <td>
+              <label class="table-input-label">Quantity</label>
+              <input type="number" class="qty" placeholder="0" min="0" step="1" value="">
+            </td>
+            <td>
+              <label class="table-input-label">Description</label>
+              <input type="text" class="description" placeholder="Item description" value="">
+            </td>
+            <td>
+              <label class="table-input-label">Unit Price</label>
+              <input type="number" class="unit-price" placeholder="0.00" min="0" step="0.01" value="">
+            </td>
+            <td>
+              <label class="table-input-label">Amount</label>
+              <input type="text" class="amount" placeholder="0.00" readonly value="">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <div class="add-row">
+        <button onclick="addRow()">Add Item</button>
+        <button onclick="removeRow()">Remove Last Item</button>
+      </div>
+
+      <div class="summary">
+        <h3>Summary:</h3>
+        <div class="summary-row">
+          <span class="summary-label">Subtotal:</span>
+          <input type="text" id="subtotal" placeholder="0.00" readonly value="">
+        </div>
+        <div class="summary-row">
+          <div class="tax-percentage-container">
+            <span class="summary-label">Tax (%):</span>
+            <input type="number" id="taxPercentage" class="tax-percentage-input" value="5" min="0" max="100" step="0.1">
+          </div>
+          <input type="text" id="tax" placeholder="0.00" readonly value="">
+        </div>
+        <div class="summary-row total-row">
+          <span class="summary-label">TOTAL DUE:</span>
+          <input type="text" id="total" placeholder="0.00" readonly value="">
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <h3>Payment Instructions:</h3>
+          <div class="input-group">
+            <label class="input-label" for="bankName">Bank Name</label>
+            <input type="text" id="bankName" placeholder="e.g., ABC Bank">
+          </div>
+          <div class="input-group">
+            <label class="input-label" for="accountNumber">Account Number</label>
+            <input type="text" id="accountNumber" placeholder="e.g., 123456789">
+          </div>
+          <div class="input-group">
+            <label class="input-label" for="contactPerson">Contact Person</label>
+            <input type="text" id="contactPerson" placeholder="e.g., John Smith">
+          </div>
+        </div>
+        <div class="col">
+          <h3>Notes:</h3>
+          <div class="input-group">
+            <label class="input-label" for="notes">Additional Notes</label>
+            <textarea id="notes" placeholder="Enter any additional information" rows="3"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <p>Thank you for your business!</p>
+        <p>Owner:    Moiz – 03172835178</p>
+        <p>Director: Sameer – 03253785025</p>
+      </footer>
+
+      <div class="actions">
+        <button onclick="printInvoice()">Print</button>
+        <button onclick="downloadPDF()">Download PDF</button>
+        <button onclick="clearForm()">Clear Form</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- jsPDF + html2canvas -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+  // Fix for XML parsing error - properly close the link tag
+  document.addEventListener('DOMContentLoaded', function() {
+    // Set default date to today
+    document.getElementById('invoiceDate').valueAsDate = new Date();
+    
+    // Add event listeners to calculate amounts
+    const itemsBody = document.getElementById('itemsBody');
+    itemsBody.addEventListener('input', calculateRow);
+    
+    // Add event listener for tax percentage changes
+    document.getElementById('taxPercentage').addEventListener('input', updateSummary);
+    
+    // Initialize calculations
+    updateSummary();
+    
+    // Preload images to ensure they're available for PDF generation
+    preloadImages();
+    
+    // Ensure all input fields maintain their values
+    fixInputFields();
+  });
+  
+  // Function to fix input field text visibility
+  function fixInputFields() {
+    const inputs = document.querySelectorAll('input, textarea');
+    inputs.forEach(input => {
+      // Ensure text color is always white
+      input.style.color = '#ffffff';
+      
+      // Add event listener to maintain text visibility
+      input.addEventListener('input', function() {
+        this.style.color = '#ffffff';
+        this.style.backgroundColor = 'rgba(12, 15, 19, 0.95)';
+      });
+      
+      // Fix for when field loses focus
+      input.addEventListener('blur', function() {
+        this.style.color = '#ffffff';
+        this.style.backgroundColor = 'rgba(12, 15, 19, 0.9)';
+      });
+    });
+  }
+  
+  // Function to preload images for PDF generation
+  function preloadImages() {
+    const logoUrl = 'https://i.postimg.cc/PrDdmpS8/A-stylized-blue-logo.png';
+    const bgUrl = 'https://i.postimg.cc/MZD7zH7Q/An-A4-sized-backgrou.png';
+    
+    // Create image objects to preload
+    const logoImg = new Image();
+    const bgImg = new Image();
+    
+    logoImg.src = logoUrl;
+    bgImg.src = bgUrl;
+    
+    // Set crossOrigin to anonymous to avoid CORS issues
+    logoImg.crossOrigin = 'anonymous';
+    bgImg.crossOrigin = 'anonymous';
+  }
+  
+  function addRow() {
+    const itemsBody = document.getElementById('itemsBody');
+    const newRow = document.createElement('tr');
+    newRow.innerHTML = `
+      <td>
+        <label class="table-input-label">Quantity</label>
+        <input type="number" class="qty" placeholder="0" min="0" step="1" value="">
+      </td>
+      <td>
+        <label class="table-input-label">Description</label>
+        <input type="text" class="description" placeholder="Item description" value="">
+      </td>
+      <td>
+        <label class="table-input-label">Unit Price</label>
+        <input type="number" class="unit-price" placeholder="0.00" min="0" step="0.01" value="">
+      </td>
+      <td>
+        <label class="table-input-label">Amount</label>
+        <input type="text" class="amount" placeholder="0.00" readonly value="">
+      </td>
+    `;
+    itemsBody.appendChild(newRow);
+    
+    // Add event listener to the new row
+    newRow.addEventListener('input', calculateRow);
+    
+    // Fix the new input fields
+    fixInputFields();
+  }
+  
+  function removeRow() {
+    const itemsBody = document.getElementById('itemsBody');
+    if (itemsBody.children.length > 1) {
+      itemsBody.removeChild(itemsBody.lastChild);
+      updateSummary();
+    }
+  }
+  
+  function calculateRow(event) {
+    const row = event.target.closest('tr');
+    if (row) {
+      const qty = parseFloat(row.querySelector('.qty').value) || 0;
+      const unitPrice = parseFloat(row.querySelector('.unit-price').value) || 0;
+      const amount = qty * unitPrice;
+      row.querySelector('.amount').value = amount.toFixed(2);
+      updateSummary();
+    }
+  }
+  
+  function updateSummary() {
+    let subtotal = 0;
+    const amounts = document.querySelectorAll('.amount');
+    amounts.forEach(amount => {
+      subtotal += parseFloat(amount.value) || 0;
+    });
+    
+    // Get tax percentage from input
+    const taxPercentage = parseFloat(document.getElementById('taxPercentage').value) || 0;
+    const tax = subtotal * (taxPercentage / 100);
+    const total = subtotal + tax;
+    
+    document.getElementById('subtotal').value = subtotal.toFixed(2);
+    document.getElementById('tax').value = tax.toFixed(2);
+    document.getElementById('total').value = total.toFixed(2);
+  }
+  
+  function clearForm() {
+    if (confirm('Are you sure you want to clear all form data?')) {
+      document.querySelectorAll('input, textarea').forEach(element => {
+        if (element.id !== 'invoiceDate' && element.id !== 'taxPercentage') {
+          element.value = '';
+        }
+      });
+      document.getElementById('invoiceDate').valueAsDate = new Date();
+      document.getElementById('taxPercentage').value = '5'; // Reset to default 5%
+      
+      // Reset items table to one row
+      const itemsBody = document.getElementById('itemsBody');
+      while (itemsBody.children.length > 1) {
+        itemsBody.removeChild(itemsBody.lastChild);
+      }
+      
+      updateSummary();
+    }
+  }
+  
+  function printInvoice() {
+    // Use a timeout to ensure the print dialog opens after the page is ready
+    setTimeout(() => {
+      window.print();
+    }, 500);
+  }
+  
+  async function downloadPDF() {
+    const { jsPDF } = window.jspdf;
+    const invoiceContainer = document.querySelector(".invoice-container");
+    
+    // Show loading message
+    document.getElementById('loadingMessage').style.display = 'block';
+    
+    // Temporarily hide buttons for PDF generation
+    const buttons = document.querySelectorAll('.actions, .add-row');
+    const originalDisplay = [];
+    buttons.forEach(button => {
+      originalDisplay.push(button.style.display);
+      button.style.display = 'none';
+    });
+    
+    try {
+      // Add delay to ensure images are loaded
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const canvas = await html2canvas(invoiceContainer, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        logging: false,
+        backgroundColor: '#15181d'
+      });
+      
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
+      const width = pdf.internal.pageSize.getWidth();
+      const height = pdf.internal.pageSize.getHeight();
+      pdf.addImage(imgData, "PNG", 0, 0, width, height);
+      pdf.save("MS_Enterprise_Invoice.pdf");
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      alert("There was an error generating the PDF. Please try again.");
+    } finally {
+      // Restore buttons after PDF generation
+      buttons.forEach((button, index) => {
+        button.style.display = originalDisplay[index];
+      });
+      
+      // Hide loading message
+      document.getElementById('loadingMessage').style.display = 'none';
+    }
+  }
+</script>
+
+</body>
+</html>
