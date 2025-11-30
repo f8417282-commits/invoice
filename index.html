@@ -18,25 +18,21 @@
     font-family:'Montserrat', sans-serif;
     color:#e6e6e6;
     margin:0;
-    padding:20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    padding:10px;
     min-height: 100vh;
   }
   
   .invoice-container {
-    width: 210mm; /* A4 width */
-    min-height: 297mm; /* A4 height */
+    width: 100%;
+    max-width: 210mm; /* A4 width for larger screens */
     margin: 0 auto;
     position: relative;
   }
   
   .invoice {
     width: 100%;
-    height: 100%;
     background: #15181d;
-    padding: 20mm; /* A4 standard padding */
+    padding: 5mm; /* Reduced padding for mobile */
     border-radius: 10px;
     box-shadow: 0 0 20px rgba(0,194,255,.3);
     position: relative;
@@ -65,23 +61,27 @@
   
   .header-container {
     display: flex;
+    flex-direction: column; /* Stack on mobile */
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 15mm;
+    margin-bottom: 10px;
     flex-wrap: wrap;
     border-bottom: 1px solid rgba(42, 47, 55, 0.7);
-    padding-bottom: 5mm;
+    padding-bottom: 10px;
   }
   
   .logo-container {
     display: flex;
+    flex-direction: column; /* Stack logo and company info */
     align-items: center;
-    gap: 15px;
+    gap: 10px;
+    margin-bottom: 10px;
+    text-align: center;
   }
   
   .logo {
-    width: 25mm;
-    height: 25mm;
+    width: 20mm; /* Smaller logo for mobile */
+    height: 20mm;
     border-radius: 8px;
     object-fit: contain;
     background: transparent;
@@ -89,49 +89,51 @@
   }
   
   .company-info {
-    text-align: left;
+    text-align: center;
   }
   
   .company-info h1 {
     color:#fff;
     margin:0;
-    font-size: 28px;
+    font-size: 20px; /* Smaller font for mobile */
     text-shadow: 0 0 5px rgba(0,0,0,0.7);
   }
   
   .company-info h2 {
     color:#b7c0ce;
     margin:0;
-    font-size:14px;
+    font-size:12px;
     font-weight: 600;
     text-shadow: 0 0 5px rgba(0,0,0,0.7);
   }
   
   .invoice-header {
-    text-align: right;
-    padding: 10px 0;
+    text-align: center;
+    padding: 5px 0;
   }
   
   .invoice-header h1 {
     color: #00c2ff;
     margin: 0;
-    font-size: 32px;
+    font-size: 24px; /* Smaller font for mobile */
     font-weight: 700;
     text-shadow: 0 0 10px rgba(0,194,255,.5);
   }
   
   .row {
     display:flex;
+    flex-direction: column; /* Stack columns on mobile */
     justify-content:space-between;
-    margin-bottom: 5mm;
+    margin-bottom: 10px;
   }
   
   .col {
-    width:48%;
+    width:100%;
+    margin-bottom: 15px;
   }
   
   .input-group {
-    margin-bottom: 10px;
+    margin-bottom: 8px;
   }
   
   .input-label {
@@ -146,7 +148,7 @@
   
   input, textarea {
     width:100%;
-    padding:8px;
+    padding:10px; /* Larger padding for touch */
     margin:0;
     background:rgba(12, 15, 19, 0.8);
     border:1px solid #2a2f37;
@@ -154,7 +156,7 @@
     border-radius:6px;
     transition: all 0.3s;
     font-family: 'Montserrat', sans-serif;
-    font-size: 14px;
+    font-size: 16px; /* Larger font for mobile readability */
   }
   
   /* Fix for input text visibility */
@@ -180,16 +182,23 @@
     color: #ffffff !important;
   }
   
+  .table-container {
+    overflow-x: auto; /* Enable horizontal scrolling for table */
+    margin: 10px 0;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  }
+  
   table {
     width:100%;
+    min-width: 500px; /* Minimum table width */
     border-collapse:collapse;
-    margin: 5mm 0;
   }
   
   th, td {
     border:1px solid #2a2f37;
     padding:8px;
     text-align:left;
+    font-size: 14px; /* Smaller font for table on mobile */
   }
   
   th {
@@ -202,11 +211,11 @@
   }
   
   .summary {
-    margin-top: 5mm;
+    margin-top: 10px;
   }
   
   .summary input {
-    width:150px;
+    width:120px; /* Smaller inputs for mobile */
   }
   
   .tax-percentage-container {
@@ -221,13 +230,13 @@
   }
   
   .actions {
-    margin-top: 10mm;
+    margin-top: 15px;
     text-align:center;
   }
   
   button {
-    padding:10px 15px;
-    margin-right:10px;
+    padding:12px 15px; /* Larger buttons for touch */
+    margin: 5px; /* Space between buttons */
     background:#1c6ed6;
     color:#fff;
     border:none;
@@ -235,6 +244,8 @@
     cursor:pointer;
     transition:background 0.3s;
     font-weight: 600;
+    font-size: 14px;
+    min-width: 120px; /* Minimum button width */
   }
   
   button:hover {
@@ -256,9 +267,10 @@
   }
   
   .summary-label {
-    width:150px;
+    width:120px; /* Smaller labels for mobile */
     display:inline-block;
     font-weight: 600;
+    font-size: 14px;
   }
   
   .total-row {
@@ -276,9 +288,10 @@
   
   footer {
     text-align:center;
-    margin-top: 10mm;
-    padding-top: 15px;
+    margin-top: 15px;
+    padding-top: 10px;
     border-top: 1px solid rgba(42, 47, 55, 0.7);
+    font-size: 14px;
   }
   
   footer p {
@@ -289,7 +302,8 @@
   h3 {
     color: #b7c0ce;
     text-shadow: 0 0 5px rgba(0,0,0,0.7);
-    margin-bottom: 10px;
+    margin-bottom: 8px;
+    font-size: 16px;
   }
   
   #loadingMessage {
@@ -304,6 +318,155 @@
     border-radius: 10px;
     z-index: 1000;
     text-align: center;
+  }
+  
+  /* Tablet and larger mobile styles */
+  @media (min-width: 576px) {
+    body {
+      padding: 15px;
+    }
+    
+    .invoice {
+      padding: 10mm;
+    }
+    
+    .header-container {
+      flex-direction: row; /* Side by side on tablet */
+    }
+    
+    .logo-container {
+      flex-direction: row; /* Logo and text side by side */
+      text-align: left;
+    }
+    
+    .company-info {
+      text-align: left;
+    }
+    
+    .company-info h1 {
+      font-size: 24px;
+    }
+    
+    .company-info h2 {
+      font-size: 14px;
+    }
+    
+    .invoice-header {
+      text-align: right;
+    }
+    
+    .invoice-header h1 {
+      font-size: 28px;
+    }
+    
+    .row {
+      flex-direction: row; /* Columns side by side */
+    }
+    
+    .col {
+      width:48%;
+      margin-bottom: 0;
+    }
+    
+    table {
+      min-width: auto; /* Reset minimum table width */
+    }
+    
+    th, td {
+      font-size: 14px;
+    }
+    
+    button {
+      margin-right:10px;
+      margin-left: 0;
+    }
+  }
+  
+  /* Desktop styles */
+  @media (min-width: 992px) {
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    
+    .invoice-container {
+      min-height: 297mm; /* A4 height for desktop */
+    }
+    
+    .invoice {
+      padding: 20mm; /* A4 standard padding */
+    }
+    
+    .header-container {
+      margin-bottom: 15mm;
+      padding-bottom: 5mm;
+    }
+    
+    .logo {
+      width: 25mm;
+      height: 25mm;
+    }
+    
+    .company-info h1 {
+      font-size: 28px;
+    }
+    
+    .company-info h2 {
+      font-size: 14px;
+    }
+    
+    .invoice-header h1 {
+      font-size: 32px;
+    }
+    
+    .row {
+      margin-bottom: 5mm;
+    }
+    
+    .input-group {
+      margin-bottom: 10px;
+    }
+    
+    input, textarea {
+      padding: 8px;
+      font-size: 14px;
+    }
+    
+    .table-container {
+      margin: 5mm 0;
+    }
+    
+    .summary {
+      margin-top: 5mm;
+    }
+    
+    .summary input {
+      width: 150px;
+    }
+    
+    .summary-label {
+      width: 150px;
+    }
+    
+    .actions {
+      margin-top: 10mm;
+    }
+    
+    button {
+      padding: 10px 15px;
+    }
+    
+    footer {
+      margin-top: 10mm;
+      padding-top: 15px;
+    }
+    
+    h3 {
+      margin-bottom: 10px;
+      font-size: inherit;
+    }
   }
   
   /* Print Styles */
@@ -355,40 +518,6 @@
     
     .input-label {
       color: #000 !important;
-    }
-  }
-  
-  @media (max-width: 768px) {
-    .invoice-container {
-      width: 100%;
-      min-height: auto;
-    }
-    
-    .header-container {
-      flex-direction: column;
-      text-align: center;
-    }
-    
-    .logo-container {
-      justify-content: center;
-      margin-bottom: 15px;
-    }
-    
-    .invoice-header {
-      text-align: center;
-    }
-    
-    .row {
-      flex-direction: column;
-    }
-    
-    .col {
-      width: 100%;
-      margin-bottom: 15px;
-    }
-    
-    .tax-percentage-container {
-      justify-content: space-between;
     }
   }
 </style>
@@ -449,36 +578,38 @@
         </div>
       </div>
 
-      <table id="itemsTable">
-        <thead>
-          <tr>
-            <th width="15%">QTY</th>
-            <th width="45%">DESCRIPTION</th>
-            <th width="20%">UNIT PRICE</th>
-            <th width="20%">AMOUNT</th>
-          </tr>
-        </thead>
-        <tbody id="itemsBody">
-          <tr>
-            <td>
-              <label class="table-input-label">Quantity</label>
-              <input type="number" class="qty" placeholder="0" min="0" step="1" value="">
-            </td>
-            <td>
-              <label class="table-input-label">Description</label>
-              <input type="text" class="description" placeholder="Item description" value="">
-            </td>
-            <td>
-              <label class="table-input-label">Unit Price</label>
-              <input type="number" class="unit-price" placeholder="0.00" min="0" step="0.01" value="">
-            </td>
-            <td>
-              <label class="table-input-label">Amount</label>
-              <input type="text" class="amount" placeholder="0.00" readonly value="">
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="table-container">
+        <table id="itemsTable">
+          <thead>
+            <tr>
+              <th width="15%">QTY</th>
+              <th width="45%">DESCRIPTION</th>
+              <th width="20%">UNIT PRICE</th>
+              <th width="20%">AMOUNT</th>
+            </tr>
+          </thead>
+          <tbody id="itemsBody">
+            <tr>
+              <td>
+                <label class="table-input-label">Quantity</label>
+                <input type="number" class="qty" placeholder="0" min="0" step="1" value="">
+              </td>
+              <td>
+                <label class="table-input-label">Description</label>
+                <input type="text" class="description" placeholder="Item description" value="">
+              </td>
+              <td>
+                <label class="table-input-label">Unit Price</label>
+                <input type="number" class="unit-price" placeholder="0.00" min="0" step="0.01" value="">
+              </td>
+              <td>
+                <label class="table-input-label">Amount</label>
+                <input type="text" class="amount" placeholder="0.00" readonly value="">
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       
       <div class="add-row">
         <button onclick="addRow()">Add Item</button>
